@@ -97,16 +97,22 @@ Data Cleaning
 
 Exploratory Data Analysis (EDA)
         ↓
+
 Feature Engineering
         ↓
+
 Train/Test Split
         ↓
+
 Model Training
         ↓
+
 Model Evaluation
         ↓
+
 Model Comparison
         ↓
+
 Best Model Selection
 
 **Exploratory Data Analysis (EDA)**
@@ -114,122 +120,123 @@ Best Model Selection
 The first notebook focuses on understanding the dataset before model development.
 
 Activities Performed
-Target Distribution Analysis
-Examined the distribution of FloodProbability.
-Checked for skewness and unusual patterns.
-Feature Distribution Analysis
-Investigated how each predictor variable is distributed.
-Identified potential outliers and feature behavior.
-Correlation Analysis
-Generated a correlation heatmap.
-Examined relationships among variables.
-Assessed possible multicollinearity issues.
+-Target Distribution Analysis
+-Examined the distribution of FloodProbability.
+-Checked for skewness and unusual patterns.
+-Feature Distribution Analysis
+-Investigated how each predictor variable is distributed.
+-Identified potential outliers and feature behavior.
+-Correlation Analysis
+-Generated a correlation heatmap.
+-Examined relationships among variables.
+-Assessed possible multicollinearity issues.
 
 Feature vs Target Analysis
-Visualized relationships between important features and flood probability.
-Identified variables with stronger predictive influence.
+-Visualized relationships between important features and flood probability.
+-Identified variables with stronger predictive influence.
 
 Feature Engineering
 Feature engineering helps machine learning algorithms discover patterns that may not be obvious from individual variables alone.
 Benefits include:
-Improved predictive power.
-Better representation of real-world flood risk.
-Enhanced model performance.
--Engineered Features
-Composite Risk Scores
-Multiple domain-related variables were combined to create broader flood-risk indicators.
+-Improved predictive power.
+-Better representation of real-world flood risk.
+-Enhanced model performance.
+
+Engineered Features
+-Composite Risk Scores
+-Multiple domain-related variables were combined to create broader flood-risk indicators.
 
 Interaction Features
-Interaction terms were created to capture relationships between important variables.
+-Interaction terms were created to capture relationships between important variables.
 
 Total Risk Score
-An aggregated score representing overall flood risk exposure was generated.
-Four regression models were trained and compared.
+-An aggregated score representing overall flood risk exposure was generated.
 
+Four regression models were trained and compared.
 1. Ridge Regression
 Purpose
-
 Serves as an interpretable baseline model.
 
 Characteristics
-Linear model.
-Uses regularization to reduce overfitting.
-Easy to interpret through feature coefficients.
+-Linear model.
+-Uses regularization to reduce overfitting.
+-Easy to interpret through feature coefficients.
 
 What Was Done
-Applied feature scaling using StandardScaler.
-Trained Ridge Regression with regularization.
-Examined feature coefficients to understand feature importance.
+-Applied feature scaling using StandardScaler.
+-Trained Ridge Regression with regularization.
+-Examined feature coefficients to understand feature importance.
+
 2. Random Forest Regressor
 Purpose
-Capture non-linear relationships within the dataset.
+-Capture non-linear relationships within the dataset.
 
 Characteristics
-Ensemble learning method.
-Combines predictions from multiple decision trees.
-Handles complex interactions automatically.
+-Ensemble learning method.
+-Combines predictions from multiple decision trees.
+-Handles complex interactions automatically.
+
 What Was Done
-Trained using 200 trees.
-Limited tree depth to reduce overfitting.
+-Trained using 200 trees.
+-Limited tree depth to reduce overfitting.
 
-XGBoost Regressor
+3. XGBoost Regressor
 Purpose
-
 Develop a highly optimized gradient boosting model.
 
 Characteristics
-State-of-the-art algorithm for structured/tabular data.
-Excellent predictive performance.
-Handles non-linear patterns effectively.
+-State-of-the-art algorithm for structured/tabular data.
+-Excellent predictive performance.
+-Handles non-linear patterns effectively.
+
 What Was Done
-Applied Optuna hyperparameter optimization.
-Conducted 50 optimization trials.
-Tuned parameters such as:
-Number of trees
-Learning rate
-Tree depth
-Regularization strength
-Sampling ratios
+-Applied Optuna hyperparameter optimization.
+-Conducted 50 optimization trials.
+-Tuned parameters such as:
+-Number of trees
+-Learning rate
+-Tree depth
+-Regularization strength
+-Sampling ratios
 
 Outcome
-XGBoost achieved the best overall performance among all models.
-Used Out-of-Bag (OOB) scoring for additional validation.
+-XGBoost achieved the best overall performance among all models.
+-Used Out-of-Bag (OOB) scoring for additional validation.
 
 Model Evaluation
-The models were evaluated using:
+-The models were evaluated using:
 
-Root Mean Squared Error (RMSE)
-Measures prediction error.
-Lower values indicate better performance.
+1. Root Mean Squared Error (RMSE)
+-Measures prediction error.
+-Lower values indicate better performance.
 
-R² Score
-Measures how much variation in flood probability is explained by the model.
-Higher values indicate better performance.
+2. R² Score
+-Measures how much variation in flood probability is explained by the model.
+-Higher values indicate better performance.
 
 Cross-Validation
 A 5-fold cross-validation procedure was conducted to evaluate model stability and generalization performance.
 
 Benefits:
-Reduces evaluation bias.
-Provides more reliable performance estimates.
-Assesses model consistency across different data splits.
+-Reduces evaluation bias.
+-Provides more reliable performance estimates.
+-Assesses model consistency across different data splits.
 
 **Major Findings**
-XGBoost produced the most accurate predictions.
-Random Forest performed strongly but slightly below XGBoost.
-Ridge Regression provided useful interpretability.
-MLP Neural Network did not outperform tree-based methods.
-Results align with established machine learning literature, where gradient boosting models typically dominate tabular datasets.
+-XGBoost produced the most accurate predictions.
+-Random Forest performed strongly but slightly below XGBoost.
+-Ridge Regression provided useful interpretability.
+-MLP Neural Network did not outperform tree-based methods.
+-Results align with established machine learning literature, where gradient boosting models typically dominate tabular datasets.
 
 Business Relevance
-
 For insurance companies, this system can be used to:
 
-Risk Assessment: To identify locations with elevated flood risk.
-Underwriting Support:Assist underwriters in making informed policy decisions.
-Support risk-based pricing strategies.
-Portfolio Management: Monitor exposure to flood-prone regions.
-Enable proactive mitigation strategies before disasters occur.
+-Risk Assessment: To identify locations with elevated flood risk.
+-Underwriting Support:Assist underwriters in making informed policy decisions.
+-Support risk-based pricing strategies.
+-Portfolio Management: Monitor exposure to flood-prone regions.
+-Enable proactive mitigation strategies before disasters occur.
 
 **Repository Structure**
 
