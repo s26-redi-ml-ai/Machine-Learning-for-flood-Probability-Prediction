@@ -4,16 +4,27 @@ This project explores the Flood Prediction Dataset from Kaggle, which focuses on
 
 **Table of Contents**
 Project Overview
+
 Problem Statement
+
 Objectives
+
 Dataset Description
+
 Project Workflow
+
 Exploratory Data Analysis (EDA)
+
 Feature Engineering
+
 Machine Learning Models
+
 Model Evaluation
+
 Results and Findings
+
 Business Relevance
+
 Repository Structure
 
 **Project Overview**
@@ -27,28 +38,44 @@ Flooding is one of the most costly natural disasters worldwide and can result in
 The challenge is to build a predictive model capable of estimating flood probability using available risk indicators. Accurate predictions can help insurance companies:
 
 Identify high-risk areas.
+
 Improve policy pricing.
+
 Reduce financial losses.
+
 Support data-driven underwriting decisions.
 
 **Objectives**
 The main objectives of this project are:
+
 Understand the characteristics of the flood prediction dataset.
+
 Explore relationships between predictor variables and flood probability.
+
 Engineer meaningful features that capture combined risk effects.
+
 Train multiple machine learning models.
+
 Compare model performance using standard regression metrics.
+
 Select the best-performing model for flood probability prediction.
+
 Future Improvements
 
 **Dataset Description**
 
 Dataset: Kaggle Playground Series Season 4 Episode 5 – Flood Prediction (https://www.kaggle.com/competitions/playground-series-s4e5)
+
 Prediction Target: FloodProbability (Represents the likelihood of flooding)
+
 -Continuous value between 0 and 1.
+
 **Dataset Characteristics**
+
 Large-scale tabular dataset.
+
 Numerical features representing flood-related risk factors.
+
 Suitable for supervised machine learning regression.
 
 Why Regression?
@@ -61,9 +88,13 @@ Unlike a classification problem where the output is simply "Flood" or "No Flood"
 
 **Project Workflow**
 Data Collection
+
         ↓
+
 Data Cleaning
+
         ↓
+
 Exploratory Data Analysis (EDA)
         ↓
 Feature Engineering
