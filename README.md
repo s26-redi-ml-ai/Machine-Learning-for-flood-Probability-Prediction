@@ -123,24 +123,6 @@ Model Comparison
 
 Best Model Selection
 
-Data Collection
-        ↓
-Data Cleaning
-        ↓
-Exploratory Data Analysis (EDA)
-        ↓
-Feature Engineering
-        ↓
-Train/Test Split
-        ↓
-Model Training
-        ↓
-Model Evaluation
-        ↓
-Model Comparison
-        ↓
-Best Model Selection
-
 **Exploratory Data Analysis (EDA)**
 
 The first notebook focuses on understanding the dataset before model development.
