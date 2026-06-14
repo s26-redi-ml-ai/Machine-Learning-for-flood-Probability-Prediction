@@ -28,7 +28,7 @@ The framing is insurance underwriting — the triage-level risk assessment that 
 
 ---
 
-## What makes this project stand out
+## Project Features
 
 **1. Probability calibration** — Applied isotonic regression and verified with reliability diagram. In insurance, miscalibration is a pricing error: a model predicting 0.8 when the true rate is 0.65 causes systematic underpricing of high-risk policies.
 
