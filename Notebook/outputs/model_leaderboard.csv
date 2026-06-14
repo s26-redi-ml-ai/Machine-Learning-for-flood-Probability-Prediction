@@ -1,0 +1,5 @@
+Model,RMSE,R²,Notes
+XGBoost (Optuna),0.01857,0.8673,Best performer
+Random Forest,0.0186,0.8669,"Non-linear, OOB estimate"
+MLP Neural Network,0.01897,0.8615,Deep learning baseline
+Ridge Regression,0.02008,0.8449,Interpretable baseline
