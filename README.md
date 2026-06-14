@@ -1,322 +1,138 @@
-# Machine-Learning-for-flood-Risk-Prediction
-**Brief Introduction**
-This project explores the Flood Prediction Dataset from Kaggle, which focuses on predicting flood probability using environmental and infrastructural factors. The objective is to develop robust machine learning regression models capable of estimating the likelihood of flooding based on various contributing features.
+# Flood Risk Scoring — ML Framework for Insurance Underwriting
 
-**Table of Contents**
+> *Predicting flood probability from hydroclimatic and socioeconomic risk factors — a multi-model ML pipeline with calibrated outputs and SHAP explainability, framed for insurance underwriting applications.*
 
-Project Overview
+---
 
-Problem Statement
+## What this project does
 
-Objectives
+This project builds a **flood risk scoring system** that predicts the probability of flooding for a given location, based on 20 factors spanning natural climate conditions, human infrastructure quality, and socioeconomic vulnerability. The output is a calibrated probability score between 0 and 1.
 
-Dataset Description
+The framing is insurance underwriting — the triage-level risk assessment that happens *before* an insurer decides whether to bind a policy, at what premium, and with what exclusions. This type of model is used in practice by:
 
-Project Workflow
+- **Non-life insurers and reinsurers** — to price flood exposure at scale
+- **Catastrophe modelling firms** (e.g. RMS, AIR Worldwide) — as a risk layer in loss models
+- **Municipal governments** — to prioritise infrastructure investment
+- **Development banks** — to assess climate risk in infrastructure lending
 
-Exploratory Data Analysis (EDA)
+---
 
-Feature Engineering
+## Results
 
-Machine Learning Models
+| Model | Val RMSE | Val R² | CV R² (5-fold) | Notes |
+|---|---|---|---|---|
+| Ridge Regression | 0.02008 | 0.845 | 0.845 ± 0.001 | Interpretable baseline |
+| MLP Neural Network | 0.01897 | 0.862 | 0.858 ± 0.001 | Deep learning baseline |
+| Random Forest | 0.01860 | 0.867 | 0.866 ± 0.001 | Non-linear, OOB estimate |
+| **XGBoost (Optuna)** | **0.01857** | **0.867** | **0.866 ± 0.001** | Best performer |
 
-Model Evaluation
+---
 
-Results and Findings
+## What makes this project stand out
 
-Business Relevance
+**1. Probability calibration** — Applied isotonic regression and verified with reliability diagram. In insurance, miscalibration is a pricing error: a model predicting 0.8 when the true rate is 0.65 causes systematic underpricing of high-risk policies.
 
-Repository Structure
+**2. SHAP explainability** — SHAP beeswarm, waterfall (per-prediction), and comparison to RF built-in importance (which is biased toward frequently-split features). Grounded in cooperative game theory.
 
-**Project Overview**
-This project develops a machine learning-based Flood Risk Prediction System using the Kaggle Playground Series Season 4, Episode 5 Flood Prediction dataset. The goal is to predict the probability of flooding for a given location based on environmental, infrastructural, and geographical factors.
-The project is designed from an insurance perspective, where accurate flood-risk estimation can help insurers assess risk exposure, improve underwriting decisions, and support premium pricing strategies.
+**3. Model card** — Explicit intended use, out-of-scope applications, and known limitations. Standard practice before any production ML deployment.
 
-**Problem Statement**
+---
 
-Flooding is one of the most costly natural disasters worldwide and can result in substantial insurance claims. Traditional risk assessment methods may not fully capture complex relationships among environmental and infrastructure-related factors.
+## Dataset
 
-The challenge is to build a predictive model capable of estimating flood probability using available risk indicators. Accurate predictions can help insurance companies:
+**Kaggle Playground Series S4E5** — 1,117,957 rows, 20 numeric features, 0 missing values, target: `FloodProbability` (continuous, 0–1).
 
-Identify high-risk areas.
+| Group | Count | Examples |
+|---|---|---|
+| Natural / Climate | 6 | MonsoonIntensity, TopographyDrainage, CoastalVulnerability |
+| Human / Infrastructure | 8 | Deforestation, Urbanization, DamsQuality, DrainageSystems |
+| Socio-political | 6 | PopulationScore, InadequatePlanning, IneffectiveDisasterPreparedness |
 
-Improve policy pricing.
+Download: [kaggle.com/competitions/playground-series-s4e5](https://kaggle.com/competitions/playground-series-s4e5)
 
-Reduce financial losses.
+---
 
-Support data-driven underwriting decisions.
+## Feature engineering
 
-**Objectives**
+| Engineered feature | Correlation with target | Rationale |
+|---|---|---|
+| `TotalRiskScore` (sum of all 20) | **r = 0.93** | Signal aggregation cancels independent noise |
+| `InfraRisk` (mean of 8 infra features) | r = 0.53 | Infrastructure risk domain score |
+| `NaturalRisk` (mean of 6 climate features) | r = 0.46 | Natural risk domain score |
+| `SocioRisk` (mean of 6 socio features) | r = 0.45 | Socioeconomic vulnerability score |
+| `Monsoon_x_Urbanization` | r = 0.25 | Urban flash flood compound risk |
+| `Deforestation_x_Landslides` | r = 0.25 | Land degradation compound risk |
 
-The main objectives of this project are:
+Individual features correlate at ~0.19 with the target. `TotalRiskScore` reaches r = 0.93 because noise cancels while signal accumulates — the same mechanism as opinion polling.
 
-Understand the characteristics of the flood prediction dataset.
+---
 
-Explore relationships between predictor variables and flood probability.
+## Repository structure
 
-Engineer meaningful features that capture combined risk effects.
+```
+flood-risk-scoring/
+├── data/
+│   ├── train.csv / test.csv           ← download from Kaggle
+│   ├── train_engineered.csv           ← generated by notebook 01
+│   └── feature_config.json
+├── notebooks/
+│   ├── 01_setup_and_eda.ipynb
+│   ├── 02_model_training.ipynb
+│   └── 03_evaluation.ipynb
+├── models/
+│   └── xgb_best.json
+├── outputs/                           ← all plots + CSVs
+├── app_v2.py                          ← Streamlit dashboard
+├── requirements.txt
+└── README.md
+```
 
-Train multiple machine learning models.
+---
 
-Compare model performance using standard regression metrics.
+## Setup
 
-Select the best-performing model for flood probability prediction.
+```bash
+git clone https://github.com/YOUR_USERNAME/flood-risk-scoring
+cd flood-risk-scoring
+pip install -r requirements.txt
+# Place train.csv + test.csv in data/
+# Run notebooks 01 → 02 → 03
+streamlit run app_v2.py
+```
 
-Future Improvements
+---
 
-**Dataset Description**
+## Dashboard (app_v2.py)
 
-Dataset: Kaggle Playground Series Season 4 Episode 5 – Flood Prediction (https://www.kaggle.com/competitions/playground-series-s4e5)
+Four-tab Streamlit app:
 
-Prediction Target: FloodProbability (Represents the likelihood of flooding)
+| Tab | Content |
+|---|---|
+| Risk Assessment | Probability gauge, domain scores, radar chart, top risk drivers |
+| Explainability | SHAP waterfall breakdown per prediction |
+| Insurance View | Underwriting decision, scenario comparison, mitigation table |
+| About Model | Full model card, methodology summary |
 
--Continuous value between 0 and 1.
+---
 
-**Dataset Characteristics**
+## Model card
 
-Large-scale tabular dataset.
+**Model:** XGBoost Flood Risk Scorer (Optuna-tuned) | **Version:** 1.0
 
-Numerical features representing flood-related risk factors.
+**Intended use:** Triage-level flood risk scoring for property insurance underwriting; portfolio exposure analysis; feature driver analysis.
 
-Suitable for supervised machine learning regression.
+**Not intended for:** Real-time emergency response; individual household assessment; replacing professional actuarial judgment.
 
-Why Regression?
-Unlike a classification problem where the output is simply "Flood" or "No Flood", this dataset requires predicting a probability score between 0 and 1.
-| Scenario           | Predicted Flood Probability |
-| ------------------ | --------------------------- |
-| Low Risk Area      | 0.12                        |
-| Moderate Risk Area | 0.54                        |
-| High Risk Area     | 0.89                        |
+**Performance:** Val RMSE = 0.01857 | Val R² = 0.867 | CV R² = 0.866 ± 0.001
 
-**Project Workflow**
-Data Collection
+**Known limitations:** Trained on synthetic data; features are ordinal scores (not physical measurements); no geographic or temporal resolution; does not capture extreme tail events.
 
-        ↓
+---
 
-Data Cleaning
+## Tech stack
 
-        ↓
+`pandas` · `numpy` · `scikit-learn` · `xgboost` · `optuna` · `shap` · `matplotlib` · `seaborn` · `plotly` · `streamlit`
 
-Exploratory Data Analysis (EDA)
+---
 
-        ↓
-
-Feature Engineering
-        
-        ↓
-
-Train/Test Split
-        
-        ↓
-
-Model Training
-        
-        ↓
-
-Model Evaluation
-        
-        ↓
-
-Model Comparison
-       
-        ↓
-
-Best Model Selection
-
-**Exploratory Data Analysis (EDA)**
-
-The first notebook focuses on understanding the dataset before model development.
-
-Activities Performed
-
--Target Distribution Analysis
-
--Examined the distribution of FloodProbability.
-
--Checked for skewness and unusual patterns.
-
--Feature Distribution Analysis
-
--Investigated how each predictor variable is distributed.
-
--Identified potential outliers and feature behavior.
-
--Correlation Analysis
-
--Generated a correlation heatmap.
-
--Examined relationships among variables.
--Assessed possible multicollinearity issues.
-
-Feature vs Target Analysis
-
--Visualized relationships between important features and flood probability.
-
--Identified variables with stronger predictive influence.
-
-Feature Engineering
-
-Feature engineering helps machine learning algorithms discover patterns that may not be obvious from individual variables alone.
-
-Benefits include:
-
--Improved predictive power.
-
--Better representation of real-world flood risk.
-
--Enhanced model performance.
-
-Engineered Features
-
-Composite Risk Scores
-
--Multiple domain-related variables were combined to create broader flood-risk indicators.
-
-Interaction Features
-
--Interaction terms were created to capture relationships between important variables.
-
-Total Risk Score
-
--An aggregated score representing overall flood risk exposure was generated.
-
-Four regression models were trained and compared.
-
-1. Ridge Regression
-
-Purpose
-
-Serves as an interpretable baseline model.
-
-Characteristics
-
--Linear model.
-
--Uses regularization to reduce overfitting.
-
--Easy to interpret through feature coefficients.
-
-What Was Done
-
--Applied feature scaling using StandardScaler.
-
--Trained Ridge Regression with regularization.
-
--Examined feature coefficients to understand feature importance.
-
-2. Random Forest Regressor
-
-Purpose
-
--Capture non-linear relationships within the dataset.
-
-Characteristics
-
--Ensemble learning method.
-
--Combines predictions from multiple decision trees.
-
--Handles complex interactions automatically.
-
-What Was Done
-
--Trained using 200 trees.
-
--Limited tree depth to reduce overfitting.
-
-3. XGBoost Regressor
-
-Purpose
-
-Develop a highly optimized gradient boosting model.
-
-Characteristics
-
--State-of-the-art algorithm for structured/tabular data.
-
--Excellent predictive performance.
-
--Handles non-linear patterns effectively.
-
-What Was Done
-
--Applied Optuna hyperparameter optimization.
-
--Conducted 50 optimization trials.
-
--Tuned parameters such as:
-
--Number of trees
-
--Learning rate
-
--Tree depth
-
--Regularization strength
-
--Sampling ratios
-
-Outcome
-
--XGBoost achieved the best overall performance among all models.
-
--Used Out-of-Bag (OOB) scoring for additional validation.
-
-Model Evaluation
-
--The models were evaluated using:
-
-1. Root Mean Squared Error (RMSE)
-
--Measures prediction error.
-
--Lower values indicate better performance.
-
-2. R² Score
-
--Measures how much variation in flood probability is explained by the model.
-
--Higher values indicate better performance.
-
-Cross-Validation
-
-A 5-fold cross-validation procedure was conducted to evaluate model stability and generalization performance.
-
-Benefits:
-
--Reduces evaluation bias.
-
--Provides more reliable performance estimates.
-
--Assesses model consistency across different data splits.
-
-**Major Findings**
-
--XGBoost produced the most accurate predictions.
-
--Random Forest performed strongly but slightly below XGBoost.
-
--Ridge Regression provided useful interpretability.
-
--MLP Neural Network did not outperform tree-based methods.
-
--Results align with established machine learning literature, where gradient boosting models typically dominate tabular datasets.
-
-Business Relevance
-
-For insurance companies, this system can be used to:
-
--Risk Assessment: To identify locations with elevated flood risk.
-
--Underwriting Support:Assist underwriters in making informed policy decisions.
-
--Support risk-based pricing strategies.
-
--Portfolio Management: Monitor exposure to flood-prone regions.
-
--Enable proactive mitigation strategies before disasters occur.
-
-**Repository Structure**
-
-**Conclusion**
-This project demonstrates a complete machine learning workflow for flood probability prediction, beginning with exploratory data analysis and feature engineering, followed by the training and evaluation of multiple regression models. Among all models tested, XGBoost with Optuna hyperparameter tuning delivered the strongest predictive performance, making it the recommended model for flood risk assessment and insurance-related decision-making.
+*Industry-focused ML portfolio project demonstrating: EDA, feature engineering, multi-model benchmarking, hyperparameter optimisation, probability calibration, SHAP explainability, residual analysis, and production-thinking deployment.*
